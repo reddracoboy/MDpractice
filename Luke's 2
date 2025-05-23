@@ -1,0 +1,43 @@
+#Question 1a
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.integrate import solve_ivp
+
+#constant  list
+x0=10.0
+v0=0.1
+
+#initial pos, vel, and vector array
+r0=[x0, 0.0] #(x, y)
+v0=[0.0, v0] #(vx, vy)
+y0=r0+v0 #vector array representing the intiial state of the system [x, y, vx, vy]
+
+#time (for numpy)
+t_span=(0, 1000) #simulate for 1000 time units
+t_eval=np.linspace(t_span[0], t_span[1], 5000)
+
+##diff eqs
+def kepler_equations(t, y):
+    x, y_, vx, vy=y
+    r=np.sqrt(x**2+y_**2)
+    ax=-x/r**3
+    ay=-y_/r**3
+    return [vx, vy, ax, ay] #array use
+
+#using scipy to solve the DE
+sol = solve_ivp(kepler_equations, t_span, y0, t_eval=t_eval, rtol=1e-9, atol=1e-9)
+
+#scipy position extraction
+x_vals=sol.y[0]
+y_vals=sol.y[1]
+
+#plot text basically copied from my Phys 150 class hw but with different variables
+plt.plot(x_vals, y_vals, label="orbit")
+plt.plot([0], [0], 'o', label="thing being orbited")  # central force source
+plt.xlabel("x")
+plt.ylabel("y")
+plt.title("kepler probel 1")
+plt.axis("equal")
+plt.legend()
+plt.show()
+#just use the given eq next time
